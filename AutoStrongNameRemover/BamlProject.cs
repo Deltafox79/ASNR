@@ -79,15 +79,18 @@ namespace ASNR
 
         private EmbeddedResource ReloadResource(EmbeddedResource resource)
         {
-            ResourceReader reader;
+            ResourceReader reader = null;
             try
             {
                 reader = new ResourceReader(resource.CreateReader().AsStream());
             }
-            catch (ArgumentException)
+            catch (Exception ex)
             {
-                Console.WriteLine("This resource can not be parsed.");
-                return resource;
+                if (ex is ArgumentException || ex is BadImageFormatException)
+                {
+                    Console.WriteLine("This resource can not be parsed.");
+                    return resource;
+                }
             }
 
             MemoryStream m = new MemoryStream();
@@ -118,16 +121,19 @@ namespace ASNR
 
         private void ParseResource(EmbeddedResource resource)
         {
-            ResourceReader reader;
+            ResourceReader reader = null;
             try
             {
                 reader = new ResourceReader(resource.CreateReader().AsStream());
             }
-            catch (ArgumentException)
+            catch (Exception ex)
             {
-                Console.WriteLine("This resource can not be parsed.");
-                //throw;
-                return;
+                if (ex is ArgumentException || ex is BadImageFormatException)
+                {
+                    Console.WriteLine("This resource can not be parsed.");
+                    //throw;
+                    return;
+                }
             }
 
             var e = reader.GetEnumerator();
